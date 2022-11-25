@@ -1,0 +1,81 @@
+#column-draggable {
+  margin: 20px 10px 10px 5px;
+  min-width: 300px;
+  max-width: 300px;
+  height: fit-content;
+  max-height: 97%;
+  display: flex;
+  box-shadow: var(--column-shadow);
+  border-radius: 5px;
+  .column-empty {
+    min-height: 50px;
+  }
+  .column-container {
+    flex: auto;
+    border-radius: 5px;
+    background-color: var(--column-secondary);
+  }
+
+  .column-header {
+    border-radius: 5px 5px 0 0;
+    background-color: var(--column-primary);
+    padding: 6px 8px;
+    margin: 0 0 0 0;
+    display: flex;
+    align-items: center;
+    font-size: 1.2em;
+    .title {
+      text-align: center;
+      flex: 1 0 auto;
+      display: flex;
+      margin-left: 5px;
+    }
+    .input-container {
+      padding: 0;
+      input {
+        border: none;
+        padding: 7px;
+      }
+      input:hover {
+        border: 1px solid black;
+        padding: 6px;
+      }
+    }
+    .add-card {
+      display: flex;
+      visibility: visible;
+      transition: opacity 0.8s linear;
+      opacity: 1;
+    }
+  }
+
+  &.draggable {
+    .column-header:hover {
+      transition: background-color 0.35s ease-out;
+      background-color: var(--card-hover);
+    }
+  }
+
+  .column-droppable {
+    // TODO: Switch shadow vars to color only, size should be fixed
+    box-shadow: 0 6px 6px -6px var(--shadow-color) inset;
+    transition: background-color 0.2s ease;
+    overflow: hidden auto;
+    &.dragging-over {
+      background-color: var(--column-hover);
+    }
+  }
+}
+
+.add-card {
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.col-is-dragging {
+  .column-header {
+    background-color: var(--card-hover);
+  }
+  background-color: var(--card-hover);
+}

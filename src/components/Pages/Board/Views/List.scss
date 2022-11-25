@@ -1,0 +1,17 @@
+#list-board {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
+  .list-col-is-dragging {
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.16), 4px 4px 4px rgba(0, 0, 0, 0.23) !important;
+    background-color: var(--card-hover) !important;
+    border: none !important;
+  }
+  #column-droppable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 100%;
+  }
+}

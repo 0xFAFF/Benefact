@@ -1,0 +1,27 @@
+#board-settings {
+  min-height: 500px;
+  h2 {
+    margin: 10px;
+  }
+  #container {
+    height: 500px;
+  }
+  #section-content {
+    margin-bottom: 10px;
+  }
+  .input-container {
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .tags-list {
+    .tag {
+      margin-top: auto;
+      margin-bottom: auto;
+      display: flex;
+      flex-grow: 1;
+    }
+  }
+  .tag-button-group {
+    justify-content: flex-end;
+  }
+}

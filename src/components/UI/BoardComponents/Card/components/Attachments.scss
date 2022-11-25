@@ -1,0 +1,42 @@
+.row-container {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+.attach-thumbnail {
+  height: 70px;
+  width: 70px;
+  border-radius: 10px;
+  background-color: #888;
+  img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+  padding: 15px;
+  margin: -10px 0px -10px -10px;
+}
+
+.row-entry {
+  padding: 10px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  background-color: #f3f3f3;
+  .hover-show {
+    visibility: hidden;
+    opacity: 0;
+  }
+  a {
+    margin-left: 10px;
+    height: fit-content;
+  }
+}
+
+.row-entry:hover {
+  .hover-show {
+    visibility: visible;
+    transition: opacity 0.8s linear;
+    opacity: 1;
+    cursor: pointer;
+  }
+}

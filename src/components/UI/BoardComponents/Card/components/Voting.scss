@@ -1,0 +1,27 @@
+#vote-container {
+  .vote-thumbs-container {
+    align-items: center;
+    .vote-tracker {
+      height: 20px;
+      padding: 3px 5px;
+      border: 1px solid var(--card-border);
+      background-color: var(--bg-primary);
+      border-radius: 3px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      span {
+        white-space: nowrap;
+      }
+    }
+    .vote-counter {
+      cursor: pointer;
+    }
+    .has-votes {
+      margin-right: 5px;
+    }
+  }
+  .vote-thumbs-container .has-votes:first-child {
+    margin-right: 5px;
+  }
+}

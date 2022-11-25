@@ -1,0 +1,51 @@
+#filter-container {
+  padding: 10px;
+  label {
+    display: flex;
+    padding: 10px;
+    font-size: 1.1em;
+  }
+  #title-wrapper-container {
+    input {
+      width: 100%;
+    }
+  }
+  .selection-ul {
+    min-height: 100px;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    li {
+      display: flex;
+      justify-content: space-around;
+      width: 50%;
+      .option-container {
+        background-color: var(--button-color);
+        border: 1px solid var(--card-border);
+        border-radius: 10px;
+        width: 100%;
+        margin-right: 5%;
+        height: 25px;
+        padding: 5px;
+        justify-content: space-between;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        .tags-label {
+          margin: 0 10px;
+        }
+      }
+      &:hover {
+        .option-container {
+          margin-left: 3%;
+          margin-right: 2%;
+        }
+      }
+    }
+  }
+}

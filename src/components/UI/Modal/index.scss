@@ -1,0 +1,43 @@
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9000;
+}
+
+.Modal {
+  outline: none;
+  position: relative;
+  width: 80%;
+  max-width: 500px;
+  &.lg {
+    max-width: 750px;
+  }
+  &.sm {
+    max-width: 275px;
+  }
+  margin: 5% auto;
+}
+
+.inner-content {
+  color: var(--text-color);
+  background: var(--bg-primary);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 10px;
+  .modal-header {
+    background: var(--bg-navbar);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    h2 {
+      margin: 10px auto;
+    }
+    box-shadow: var(--bg-shadow);
+  }
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+}

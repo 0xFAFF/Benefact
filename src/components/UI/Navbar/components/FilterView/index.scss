@@ -1,0 +1,9 @@
+#filter-view {
+  display: inline-block;
+  .message {
+    margin-right: 5px;
+  }
+  .reset-filters {
+    cursor: pointer;
+  }
+}
