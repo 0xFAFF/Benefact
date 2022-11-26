@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=verysecretpassword
+    restart: always
+  api:
+    image: benefact-api
+    depends_on:
+      - db
+    environment:
+      - "ConnectionStrings_BenefactDatabase=\"Host=poajsfpojasf;Username=postgres;Database=benefact;Password=verysecretpassword\""
+    ports:
+      - "8080:80"
+    build: "api/"
+  ui:
+    image: benefact-ui
+    ports:
+      - "80:80"
+    build: "ui/"

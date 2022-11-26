@@ -1,11 +1,11 @@
 # build environment
-FROM node:9.6.1 as builder
-RUN mkdir /usr/src/app
+FROM node:14.21-alpine as builder
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY package.json /usr/src/app/package.json
 RUN npm install
 RUN npm install react-scripts@1.1.1 -g --silent
+# This includes node_modules to reduce build time after an install, but maybe shouldn't?
 COPY . /usr/src/app
 ARG GIT_COMMIT=unspecified
 ENV REACT_APP_GIT_COMMIT $GIT_COMMIT
