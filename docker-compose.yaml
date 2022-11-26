@@ -12,12 +12,12 @@ services:
     depends_on:
       - db
     environment:
-      - "ConnectionStrings_BenefactDatabase=\"Host=poajsfpojasf;Username=postgres;Database=benefact;Password=verysecretpassword\""
-    ports:
-      - "8080:80"
+      ConnectionStrings:BenefactDatabase: Host=db;Username=postgres;Database=benefact;Password=verysecretpassword
     build: "api/"
   ui:
     image: benefact-ui
+    environment:
+      API_TARGET: api
     ports:
       - "80:80"
     build: "ui/"
