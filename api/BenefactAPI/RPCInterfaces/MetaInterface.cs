@@ -9,58 +9,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BenefactAPI.RPCInterfaces
-{
+namespace BenefactAPI.RPCInterfaces {
     [ReplicateType]
-    public class CreateBoardRequest
-    {
+    public class CreateBoardRequest {
         public string Title;
         public string UrlName;
         public bool CreateTemplate;
     }
     [ReplicateType]
-    public class TrelloImportRequest
-    {
+    public class TrelloImportRequest {
         public string UrlName;
         public TrelloBoard Board;
     }
     [ReplicateType]
-    public class GithubImportRequest
-    {
+    public class GithubImportRequest {
         public string Name;
         public string UrlName;
         public List<GithubCard> Board;
     }
     [ReplicateType]
     [ReplicateRoute(Route = "api")]
-    public class MetaInterface
-    {
+    public class MetaInterface {
         IServiceProvider services;
 
-        public Task<string> Version()
-        {
+        public Task<string> Version() {
             return Task.FromResult(Environment.GetEnvironmentVariable("GIT_COMMIT"));
         }
-        public MetaInterface(IServiceProvider services)
-        {
+        public MetaInterface(IServiceProvider services) {
             this.services = services;
         }
-        static async Task addAdminRole(BenefactDbContext db, BoardData board)
-        {
+        static async Task addAdminRole(BenefactDbContext db, BoardData board) {
             var userRole = new UserRole() { BoardId = board.Id, UserId = Auth.CurrentUser.Id, Privilege = (Privilege)255 };
             await db.AddAsync(userRole);
         }
         [AuthRequired]
         [ReplicateRoute(Route = "board/create")]
-        public Task<string> Create(CreateBoardRequest request)
-        {
-            return services.DoWithDB(async db =>
-            {
+        public Task<string> Create(CreateBoardRequest request) {
+            return services.DoWithDB(async db => {
                 var board = new BoardData();
                 TypeUtil.CopyFrom(board, request);
                 board.CreatorId = Auth.CurrentUser.Id;
-                if (request.CreateTemplate)
-                {
+                if (request.CreateTemplate) {
                     List<ColumnData> columns = new List<ColumnData>
                     {
                         new ColumnData
@@ -147,18 +136,15 @@ namespace BenefactAPI.RPCInterfaces
                         }
                     };
 
-                    foreach (var column in columns)
-                    {
+                    foreach (var column in columns) {
                         board.Columns.Add(column);
                     }
 
-                    foreach (var tag in tags)
-                    {
+                    foreach (var tag in tags) {
                         board.Tags.Add(tag);
                     }
 
-                    foreach (var card in cards)
-                    {
+                    foreach (var card in cards) {
                         board.Cards.Add(card);
                     }
                 }
@@ -170,92 +156,80 @@ namespace BenefactAPI.RPCInterfaces
         }
         [AuthRequired]
         [ReplicateRoute(Route = "board/trello_import")]
-        public Task<string> Import(TrelloImportRequest request)
-        {
+        public Task<string> Import(TrelloImportRequest request) {
             var board = request.Board;
-            return services.DoWithDB(async db =>
-            {
-                board.Board = new BoardData()
-                {
-                    Title = board.name,
+            return services.DoWithDB(async db => {
+                board.Board = new BoardData() {
+                    Title = board.Name,
                     UrlName = request.UrlName,
                     CreatorId = Auth.CurrentUser.Id,
                 };
                 await db.AddAsync(board.Board);
-                foreach (var label in board.labels)
-                {
-                    label.Tag = new TagData()
-                    {
+                await db.SaveChangesAsync();
+                foreach (var label in board.Labels) {
+                    label.Tag = new TagData() {
                         BoardId = board.Board.Id,
-                        Color = label.color,
-                        Name = label.name
+                        Color = label.Color,
+                        Name = label.Name
                     };
                     await db.AddAsync(label.Tag);
                 }
-                for (int i = 0; i < board.lists.Count; i++)
-                {
-                    var list = board.lists[i];
-                    list.Column = new ColumnData()
-                    {
+                await db.SaveChangesAsync();
+                for (int i = 0; i < board.Lists.Count; i++) {
+                    var list = board.Lists[i];
+                    list.Column = new ColumnData() {
                         BoardId = board.Board.Id,
-                        Title = list.name,
+                        Title = list.Name,
                         Index = i,
                         AllowContribution = false,
                         State = CardState.Proposed,
                     };
                     await db.AddAsync(list.Column);
                 }
-                var cards = board.cards.Where(c => !c.closed).ToList();
-                for (int i = 0; i < cards.Count; i++)
-                {
+                await db.SaveChangesAsync();
+                var cards = board.Cards.Where(c => !c.Closed).ToList();
+                for (int i = 0; i < cards.Count; i++) {
                     var card = cards[i];
-                    card.Card = new CardData()
-                    {
+                    card.Card = new CardData() {
                         BoardId = board.Board.Id,
-                        ColumnId = board.lists.First(l => l.id == card.idList).Column.Id,
-                        Description = card.desc,
-                        TagIds = card.idLabels.Select(lid => board.labels.First(l => l.id == lid).Tag.Id).ToList(),
-                        Title = card.name,
+                        ColumnId = board.Lists.First(l => l.Id == card.IdList).Column.Id,
+                        Description = card.Desc,
+                        TagIds = card.IdLabels.Select(lid => board.Labels.First(l => l.Id == lid).Tag.Id).ToList(),
+                        Title = card.Name,
                         Index = i,
                         AuthorId = Auth.CurrentUser.Id,
                     };
                     await db.AddAsync(card.Card);
-                    foreach (var attachment in card.attachments)
-                    {
-                        await db.AddAsync(new AttachmentData()
-                        {
+                    foreach (var attachment in card.Attachments) {
+                        await db.AddAsync(new AttachmentData() {
                             BoardId = board.Board.Id,
-                            CardId = card.Card.Id,
-                            Name = attachment.name,
-                            Url = attachment.url,
-                            Preview = attachment.previews.FirstOrDefault(p => p.width == 150)?.url,
+                            Card = card.Card,
+                            Name = attachment.Name,
+                            Url = attachment.Url,
+                            Preview = attachment.Previews.FirstOrDefault(p => p.Width == 150)?.Url,
                             UserId = Auth.CurrentUser.Id,
                         });
                     }
                 }
+                await db.SaveChangesAsync();
                 await addAdminRole(db, board.Board);
                 return board.Board.UrlName;
             }).HandleDuplicate("ix_boards_url_name", "A board with that URL already exists");
         }
         [AuthRequired]
         [ReplicateRoute(Route = "board/github_import")]
-        public Task<string> Import(GithubImportRequest request)
-        {
+        public Task<string> GithubImport(GithubImportRequest request) {
             var requestBoard = new GithubBoard(request.Board);
-            return services.DoWithDB(async db =>
-            {
-                var board = new BoardData()
-                {
+            return services.DoWithDB(async db => {
+                var board = new BoardData() {
                     Title = request.Name,
                     UrlName = request.UrlName,
                     CreatorId = Auth.CurrentUser.Id,
                 };
                 await db.AddAsync(board);
                 await db.SaveChangesAsync();
-                foreach (var label in requestBoard.labels.Values)
-                {
-                    label.Tag = new TagData()
-                    {
+                foreach (var label in requestBoard.labels.Values) {
+                    label.Tag = new TagData() {
                         Board = board,
                         Color = label.color,
                         Name = label.name
@@ -263,8 +237,7 @@ namespace BenefactAPI.RPCInterfaces
                     await db.AddAsync(label.Tag);
                 }
                 await db.SaveChangesAsync();
-                var column = new ColumnData()
-                {
+                var column = new ColumnData() {
                     Board = board,
                     Title = "Open",
                     Index = 0,
@@ -274,11 +247,9 @@ namespace BenefactAPI.RPCInterfaces
                 await db.AddAsync(column);
                 await db.SaveChangesAsync();
                 var cards = requestBoard.cards;
-                for (int i = 0; i < cards.Count; i++)
-                {
+                for (int i = 0; i < cards.Count; i++) {
                     var card = cards[i];
-                    card.Card = new CardData()
-                    {
+                    card.Card = new CardData() {
                         Board = board,
                         ColumnId = column.Id,
                         Description = card.body.Replace("\r\n", "\n"),
