@@ -45,6 +45,7 @@ resource "aws_route_table_association" "subnet_b" {
 }
 
 resource "aws_security_group" "task_sg" {
+  name   = "${var.prefix}-task-sg"
   vpc_id = aws_vpc.main.id
   ingress {
     from_port       = 80
@@ -55,6 +56,7 @@ resource "aws_security_group" "task_sg" {
 }
 
 resource "aws_security_group" "instance" {
+  name   = "${var.prefix}-instance-sg"
   vpc_id = aws_vpc.main.id
   ingress {
     from_port       = 22
